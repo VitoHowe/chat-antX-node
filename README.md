@@ -12,12 +12,15 @@
 
 1. 确保已安装 Node.js 环境
 2. 安装依赖：`npm install`
-3. 启动服务：`npm start`
+3. 配置数据库：复制 `config/db.example.js` 为 `config/db.js` 并修改为您的数据库信息
+4. 启动服务：`npm start`
 
 ## 项目结构
 
 - `app.js`：应用入口文件
 - `config/`：配置文件目录
+  - `db.js`：数据库配置（需自行创建，不会上传到 Git）
+  - `db.example.js`：数据库配置示例
 - `routes/`：路由定义目录
 - `controllers/`：控制器目录
 - `models/`：数据模型目录
@@ -34,7 +37,7 @@
 
 ## 数据库配置
 
-数据库连接信息在`.env`文件中配置，包括：
+数据库连接信息在 `config/db.js` 文件中配置（从 `db.example.js` 复制并修改），包括：
 
 - 主机地址
 - 端口号
@@ -47,3 +50,4 @@
 - 确保 MySQL 服务已启动
 - 确保数据库连接信息正确
 - 首次使用需创建必要的数据库表结构
+- 请勿将包含敏感信息的 `config/db.js` 文件提交到 Git 仓库
