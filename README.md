@@ -1,3 +1,12 @@
+<!--
+ * @Description:
+ * @Version: 2.0
+ * @Autor: MyStery
+ * @Date: 2025-07-08 23:56:51
+ * @LastEditors: MyStery
+ * @LastEditTime: 2025-07-10 22:56:29
+-->
+
 # Koa 服务器项目
 
 这是一个基于 Koa 框架的服务器项目，连接 MySQL 数据库。
