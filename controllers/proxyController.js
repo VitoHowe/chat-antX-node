@@ -4,7 +4,7 @@
  * @Autor: MyStery
  * @Date: 2025-07-09 23:30:45
  * @LastEditors: MyStery
- * @LastEditTime: 2025-07-10 22:56:10
+ * @LastEditTime: 2025-07-10 23:36:32
  */
 /**
  * 代理控制器
@@ -52,15 +52,22 @@ async function forwardModelsRequest(ctx) {
       },
     });
 
-    // 返回外部API的响应
-    ctx.body = response.data;
+    // 返回外部API的响应，包装成统一格式
+    ctx.body = {
+      success: true,
+      data: response.data,
+    };
   } catch (error) {
     console.error("转发请求失败:", error.message);
 
     // 如果是外部API返回的错误，保留状态码和错误信息
     if (error.response) {
       ctx.status = error.response.status;
-      ctx.body = error.response.data;
+      ctx.body = {
+        success: false,
+        message: "外部API返回错误",
+        error: error.response.data,
+      };
     } else {
       // 其他错误
       ctx.status = 500;
@@ -260,7 +267,10 @@ async function forwardChatCompletions(ctx) {
 
       console.log("✅ 普通响应处理完成");
       // 返回外部API的响应
-      ctx.body = response.data;
+      ctx.body = {
+        success: true,
+        data: response.data,
+      };
     }
   } catch (error) {
     console.error("❌ 转发聊天请求失败:", error.message);
@@ -271,7 +281,11 @@ async function forwardChatCompletions(ctx) {
       console.log("外部API错误状态:", error.response.status);
       console.log("外部API错误数据:", error.response.data);
       ctx.status = error.response.status;
-      ctx.body = error.response.data;
+      ctx.body = {
+        success: false,
+        message: "外部API返回错误",
+        error: error.response.data,
+      };
     } else {
       // 其他错误
       ctx.status = 500;
