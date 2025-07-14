@@ -90,6 +90,14 @@
 
 ### 代理接口
 
+**⚠️ 重要：所有代理接口都需要 JWT token 验证。请在请求头中包含有效的 token：**
+
+```
+Authorization: Bearer your_jwt_token_here
+```
+
+如果未提供 token 或 token 无效，将返回 401 未授权错误。
+
 #### 1. 获取模型列表
 
 - **URL**: `GET /models?type={type}`
@@ -207,6 +215,123 @@
 - `PUT /api/users/:id`：更新指定 ID 的用户
 - `DELETE /api/users/:id`：删除指定 ID 的用户
 
+### 认证接口
+
+#### 1. 用户登录
+
+- **URL**: `POST /api/auth/login`
+- **功能**: 用户登录验证，返回 JWT token
+- **加密方式**:
+  - 密码使用 bcrypt 加密（加密强度：12）
+  - Token 使用 JWT (JSON Web Token) 生成
+- **请求体**:
+
+```json
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+```
+
+- **成功响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "登录成功",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": 1,
+      "username": "your_username",
+      "email": "user@example.com",
+      "createdAt": "2025-07-10T12:00:00.000Z"
+    },
+    "expiresIn": "24h"
+  }
+}
+```
+
+- **错误响应示例**:
+
+```json
+{
+  "success": false,
+  "message": "用户名或密码错误"
+}
+```
+
+#### 2. 用户注册
+
+- **URL**: `POST /api/auth/register`
+- **功能**: 新用户注册，自动加密密码并返回 JWT token
+- **请求体** (所有字段均为必填):
+
+```json
+{
+  "username": "new_username",
+  "email": "user@example.com",
+  "password": "your_password"
+}
+```
+
+- **成功响应示例**:
+
+```json
+{
+  "success": true,
+  "message": "注册成功",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": 2,
+      "username": "new_username",
+      "email": "user@example.com"
+    },
+    "expiresIn": "24h"
+  }
+}
+```
+
+- **错误响应示例**:
+
+```json
+{
+  "success": false,
+  "message": "用户名、邮箱和密码为必填项"
+}
+```
+
+或
+
+```json
+{
+  "success": false,
+  "message": "邮箱格式不正确"
+}
+```
+
+#### 3. 使用 Token 访问受保护接口
+
+在需要身份验证的请求中，请在请求头中包含 Token：
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**示例（使用 curl）**:
+
+```bash
+# 登录获取 token
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"testpass"}'
+
+# 使用 token 访问受保护的接口
+curl -X GET http://localhost:3000/api/users \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+```
+
 ## 数据库配置
 
 ### 配置文件
@@ -280,14 +405,18 @@ chat-antX-node/
 - **@koa/cors**: CORS 跨域中间件
 - **koa-bodyparser**: 请求体解析中间件
 - **koa-router**: 路由中间件
+- **bcryptjs**: 密码加密库（用于用户密码安全存储）
+- **jsonwebtoken**: JWT token 生成和验证库
 - **nodemon**: 开发时自动重启工具
 
 ## 安全特性
 
 1. **API 密钥保护**: 所有外部 API 密钥存储在后端数据库中，前端无法直接访问
-2. **配置文件保护**: 敏感配置文件已添加到 `.gitignore`，不会被提交到版本控制
-3. **错误处理**: 完善的错误处理机制，避免敏感信息泄露
-4. **CORS 控制**: 可配置的跨域访问控制
+2. **密码加密存储**: 用户密码使用 bcrypt 进行加密存储，加密强度为 12，确保即使数据库泄露也无法直接获取明文密码
+3. **JWT 身份验证**: 采用 JSON Web Token 进行用户身份验证，Token 有效期为 24 小时，支持无状态的安全认证
+4. **配置文件保护**: 敏感配置文件已添加到 `.gitignore`，不会被提交到版本控制
+5. **错误处理**: 完善的错误处理机制，避免敏感信息泄露
+6. **CORS 控制**: 可配置的跨域访问控制
 
 ## 开发说明
 

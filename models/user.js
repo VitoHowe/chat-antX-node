@@ -45,6 +45,15 @@ async function getUserById(id) {
   return users.length > 0 ? users[0] : null;
 }
 
+// 根据用户名获取用户（包含密码，用于登录验证）
+async function getUserByUsername(username) {
+  const users = await query(
+    "SELECT id, username, email, password, created_at, updated_at FROM users WHERE username = ?",
+    [username]
+  );
+  return users.length > 0 ? users[0] : null;
+}
+
 // 创建新用户
 async function createUser(userData) {
   const { username, email, password } = userData;
@@ -96,6 +105,7 @@ module.exports = {
   initTable,
   getAllUsers,
   getUserById,
+  getUserByUsername,
   createUser,
   updateUser,
   deleteUser,

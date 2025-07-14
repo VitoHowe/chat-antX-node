@@ -4,7 +4,7 @@
  * @Autor: MyStery
  * @Date: 2025-07-09 23:30:45
  * @LastEditors: MyStery
- * @LastEditTime: 2025-07-10 23:36:32
+ * @LastEditTime: 2025-07-14 20:15:43
  */
 /**
  * 代理控制器
@@ -14,9 +14,24 @@
 const axios = require("axios");
 const modelSourceModel = require("../models/modelSource");
 const fetch = require("node-fetch"); // 确保安装了node-fetch
+const { verifyToken } = require("./authController"); // 导入token验证中间件
 
 // 转发模型列表请求
 async function forwardModelsRequest(ctx) {
+  // 验证Token
+  try {
+    await verifyToken(ctx, async () => {
+      // Token验证通过，继续执行原有逻辑
+      await executeForwardModelsRequest(ctx);
+    });
+  } catch (error) {
+    // Token验证失败，verifyToken已经设置了响应
+    return;
+  }
+}
+
+// 原有的转发模型列表请求逻辑
+async function executeForwardModelsRequest(ctx) {
   try {
     const { type } = ctx.query;
 
@@ -82,6 +97,20 @@ async function forwardModelsRequest(ctx) {
 
 // 转发聊天完成请求
 async function forwardChatCompletions(ctx) {
+  // 验证Token
+  try {
+    await verifyToken(ctx, async () => {
+      // Token验证通过，继续执行原有逻辑
+      await executeForwardChatCompletions(ctx);
+    });
+  } catch (error) {
+    // Token验证失败，verifyToken已经设置了响应
+    return;
+  }
+}
+
+// 原有的转发聊天完成请求逻辑
+async function executeForwardChatCompletions(ctx) {
   try {
     const { type } = ctx.query;
     const requestData = ctx.request.body;
@@ -89,6 +118,7 @@ async function forwardChatCompletions(ctx) {
 
     console.log("=== 聊天完成请求开始 ===");
     console.log("查询参数 type:", type);
+    console.log("用户信息:", ctx.user); // 显示验证通过的用户信息
     // console.log("请求体:", JSON.stringify(requestData, null, 2));
     console.log("是否流式模式:", isStreamMode);
 
@@ -300,6 +330,20 @@ async function forwardChatCompletions(ctx) {
 
 // 获取所有模型来源信息
 async function getModelSources(ctx) {
+  // 验证Token
+  try {
+    await verifyToken(ctx, async () => {
+      // Token验证通过，继续执行原有逻辑
+      await executeGetModelSources(ctx);
+    });
+  } catch (error) {
+    // Token验证失败，verifyToken已经设置了响应
+    return;
+  }
+}
+
+// 原有的获取所有模型来源信息逻辑
+async function executeGetModelSources(ctx) {
   try {
     // 从数据库获取所有模型来源
     const sources = await modelSourceModel.getAllSources();
@@ -329,6 +373,20 @@ async function getModelSources(ctx) {
 
 // 获取单个模型来源信息
 async function getModelSourceByType(ctx) {
+  // 验证Token
+  try {
+    await verifyToken(ctx, async () => {
+      // Token验证通过，继续执行原有逻辑
+      await executeGetModelSourceByType(ctx);
+    });
+  } catch (error) {
+    // Token验证失败，verifyToken已经设置了响应
+    return;
+  }
+}
+
+// 原有的获取单个模型来源信息逻辑
+async function executeGetModelSourceByType(ctx) {
   try {
     const { type } = ctx.params;
 

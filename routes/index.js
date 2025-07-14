@@ -1,3 +1,11 @@
+/*
+ * @Description:
+ * @Version: 2.0
+ * @Autor: MyStery
+ * @Date: 2025-07-08 23:58:56
+ * @LastEditors: MyStery
+ * @LastEditTime: 2025-07-14 21:47:12
+ */
 /**
  * 路由索引文件
  * 集中管理所有API路由
@@ -6,6 +14,7 @@
 const Router = require("koa-router");
 const userRoutes = require("./userRoutes");
 const proxyRoutes = require("./proxyRoutes");
+const authRoutes = require("./authRoutes");
 
 const router = new Router();
 
@@ -18,6 +27,10 @@ router.get("/", async (ctx) => {
     apiRoot: "/api",
   };
 });
+
+// 注册认证路由（使用 /api/auth 前缀）
+router.use(authRoutes.routes());
+router.use(authRoutes.allowedMethods());
 
 // 组合所有路由
 router.use(userRoutes.routes());

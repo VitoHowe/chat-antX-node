@@ -3,6 +3,7 @@
  * 处理用户相关的HTTP请求
  */
 
+const bcrypt = require("bcryptjs");
 const UserModel = require("../models/user");
 
 // 获取所有用户
@@ -67,7 +68,29 @@ async function createUser(ctx) {
   }
 
   try {
-    const userId = await UserModel.createUser(userData);
+    // 检查用户名是否已存在
+    const existingUser = await UserModel.getUserByUsername(userData.username);
+    if (existingUser) {
+      ctx.status = 409;
+      ctx.body = {
+        success: false,
+        message: "用户名已存在",
+      };
+      return;
+    }
+
+    // 加密密码
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+
+    // 创建用户数据（替换明文密码为加密密码，确保email有默认值）
+    const userDataWithHashedPassword = {
+      username: userData.username,
+      email: userData.email || null, // 如果没有提供email，设为null
+      password: hashedPassword,
+    };
+
+    const userId = await UserModel.createUser(userDataWithHashedPassword);
     ctx.status = 201;
     ctx.body = {
       success: true,
@@ -92,6 +115,12 @@ async function updateUser(ctx) {
   const userData = ctx.request.body;
 
   try {
+    // 如果要更新密码，先加密
+    if (userData.password) {
+      const saltRounds = 12;
+      userData.password = await bcrypt.hash(userData.password, saltRounds);
+    }
+
     const success = await UserModel.updateUser(userId, userData);
     if (!success) {
       ctx.status = 404;
