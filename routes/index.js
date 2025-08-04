@@ -16,6 +16,7 @@ const userRoutes = require("./userRoutes");
 const proxyRoutes = require("./proxyRoutes");
 const authRoutes = require("./authRoutes");
 const userDataRoutes = require("./userDataRoutes");
+const adminRoutes = require("./adminRoutes");
 
 const router = new Router();
 
