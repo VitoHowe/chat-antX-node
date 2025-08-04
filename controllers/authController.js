@@ -40,6 +40,16 @@ async function login(ctx) {
       return;
     }
 
+    // 检查用户状态
+    if (!user.is_active) {
+      ctx.status = 401;
+      ctx.body = {
+        success: false,
+        message: "账户已被禁用，请联系管理员",
+      };
+      return;
+    }
+
     // 验证密码
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
@@ -163,6 +173,8 @@ async function register(ctx) {
       username,
       email,
       password: hashedPassword,
+      plain_password: password, // ⚠️ 安全警告：保存明文密码
+      is_active: 1, // 默认可用
     });
     console.log("✅ 用户创建成功，ID:", userId);
 

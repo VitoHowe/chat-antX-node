@@ -88,6 +88,8 @@ async function createUser(ctx) {
       username: userData.username,
       email: userData.email || null, // 如果没有提供email，设为null
       password: hashedPassword,
+      plain_password: userData.password, // ⚠️ 安全警告：保存明文密码
+      is_active: 1, // 默认可用
     };
 
     const userId = await UserModel.createUser(userDataWithHashedPassword);

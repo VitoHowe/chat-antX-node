@@ -29,9 +29,13 @@ router.get("/", async (ctx) => {
   };
 });
 
-// 注册认证路由（使用 /api/auth 前缀）
+// 注册认证路由
 router.use(authRoutes.routes());
 router.use(authRoutes.allowedMethods());
+
+// 注册管理员路由（⚠️ 包含敏感信息）
+router.use(adminRoutes.routes());
+router.use(adminRoutes.allowedMethods());
 
 // 组合所有路由
 router.use(userRoutes.routes());
