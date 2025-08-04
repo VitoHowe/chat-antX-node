@@ -18,6 +18,7 @@ const router = require("./routes");
 const { testConnection } = require("./models/db");
 const userModel = require("./models/user");
 const modelSourceModel = require("./models/modelSource");
+const userDataModel = require("./models/userData");
 
 // 创建Koa应用实例
 const app = new Koa();
@@ -74,6 +75,7 @@ async function startServer() {
     // 初始化数据库表
     await userModel.initTable();
     await modelSourceModel.initTable();
+    await userDataModel.initTable();
 
     // 启动HTTP服务
     app.listen(PORT, () => {

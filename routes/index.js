@@ -15,6 +15,7 @@ const Router = require("koa-router");
 const userRoutes = require("./userRoutes");
 const proxyRoutes = require("./proxyRoutes");
 const authRoutes = require("./authRoutes");
+const userDataRoutes = require("./userDataRoutes");
 
 const router = new Router();
 
@@ -35,6 +36,10 @@ router.use(authRoutes.allowedMethods());
 // 组合所有路由
 router.use(userRoutes.routes());
 router.use(userRoutes.allowedMethods());
+
+// 注册用户数据路由
+router.use(userDataRoutes.routes());
+router.use(userDataRoutes.allowedMethods());
 
 // 注册代理路由
 router.use(proxyRoutes.routes());
