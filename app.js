@@ -73,9 +73,9 @@ async function startServer() {
     }
 
     // 初始化数据库表
-    await userModel.initTable();
-    await modelSourceModel.initTable();
-    await userDataModel.initTable();
+    // await userModel.initTable();
+    // await modelSourceModel.initTable();
+    // await userDataModel.initTable();
 
     // 启动HTTP服务
     app.listen(PORT, () => {

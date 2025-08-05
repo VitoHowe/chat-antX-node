@@ -48,7 +48,7 @@ async function initTable() {
 async function getUserDataByUserId(userId) {
   try {
     return await query(
-      "SELECT id, field_name, data, created_at, updated_at FROM user_data WHERE user_id = ? ORDER BY created_at DESC",
+      "SELECT id, field_name, created_at, updated_at FROM user_data WHERE user_id = ? ORDER BY created_at DESC",
       [userId]
     );
   } catch (error) {
